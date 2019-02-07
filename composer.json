@@ -1,9 +1,9 @@
 {
-    "name": "Webdimension/session-mysql",
+    "name": "webdimension/session-mysql",
     "type": "library",
     "description": "PHP Session Save MySQL",
     "keywords": ["php", "mysql", "session","mysqli"],
-    "homepage": "https://github.com/programster/PHP-MySQL-Session-Handler",
+    "homepage": "https://github.com/webdimension/session-mysql",
     "license": "MIT",
     "authors": [
     {
