@@ -1,0 +1,21 @@
+{
+    "name": "Webdimension/session-mysql",
+    "type": "library",
+    "description": "PHP Session Save MySQL",
+    "keywords": ["php", "mysql", "session","mysqli"],
+    "homepage": "https://github.com/programster/PHP-MySQL-Session-Handler",
+    "license": "MIT",
+    "authors": [
+    {
+        "name": "WEBDIMENSION"
+    }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webdimension\\SessionHandler\\": "src/"
+        }
+    }
+}
