@@ -31,7 +31,6 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function close()
  {
-	echo 'close <br />';
 	return true;
  }
 
@@ -42,13 +41,11 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function destroy($id)
  {
-  echo 'destroy : '.$id."<br />";
-	echo $sql = sprintf(
+	 $sql = sprintf(
 		"DELETE FROM `%s` WHERE id = '%s'",
 		$this->table,
 		$this->con->escape_string($id)
 	);
-	echo "<br />";
 	return $this->con->query($sql);
  }
 
@@ -59,7 +56,6 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function gc($maxlifetime)
  {
-	echo 'gc <br />';
 
 	$sql = sprintf(
 		"DELETE FROM `%s` WHERE updated_on < '%s'",
@@ -78,7 +74,6 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function open($save_path, $session_id)
  {
-	echo 'open <br />';
 
 	// ここで毎回テーブルの有無をチェックしたくない場合は、trueを返すだけの関数にしてください。
 //	return $this->createTable();
@@ -92,13 +87,11 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function read($session_id)
  {
-	echo 'read : '.$session_id.'<br />';
-	echo $sql = sprintf(
+	 $sql = sprintf(
 		"SELECT data FROM `%s` WHERE id = '%s'",
 		$this->table,
 		$this->con->escape_string($session_id)
 	);
-	echo "<br />";
 	$result = $this->con->query($sql);
 
 	if ($result === false) {
@@ -123,15 +116,13 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function write($id, $data)
  {
-	echo 'write : '.$id."<br />";
-	echo $sql = sprintf(
+	 $sql = sprintf(
 		"REPLACE INTO `%s` (id, data, updated_on) VALUES('%s', '%s', '%s')",
 		$this->table,
 		$this->con->escape_string($id),
 		$this->con->escape_string($data),
 		date('Y-m-d H:i:s')
 	);
-	echo "<br />";
 	return $this->con->query($sql);
  }
 
@@ -151,7 +142,7 @@ final class SessionHandler implements \SessionHandlerInterface
 	}
 
 	$sql = <<< 'EOD'
-CREATE TABLE `session` (
+CREATE TABLE `sessions` (
   `id` varchar(32) NOT NULL DEFAULT '',
   `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `data` mediumtext NOT NULL,
