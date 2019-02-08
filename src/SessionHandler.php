@@ -44,7 +44,7 @@ final class SessionHandler implements \SessionHandlerInterface
 	 $sql = sprintf(
 		"DELETE FROM `%s` WHERE id = '%s'",
 		$this->table,
-		$this->con->escape_string($id)
+		$this->con->real_escape_string($id)
 	);
 	return $this->con->query($sql);
  }
@@ -90,7 +90,7 @@ final class SessionHandler implements \SessionHandlerInterface
 	 $sql = sprintf(
 		"SELECT data FROM `%s` WHERE id = '%s'",
 		$this->table,
-		$this->con->escape_string($session_id)
+		$this->con->real_escape_string($session_id)
 	);
 	$result = $this->con->query($sql);
 
@@ -119,8 +119,8 @@ final class SessionHandler implements \SessionHandlerInterface
 	 $sql = sprintf(
 		"REPLACE INTO `%s` (id, data, updated_on) VALUES('%s', '%s', '%s')",
 		$this->table,
-		$this->con->escape_string($id),
-		$this->con->escape_string($data),
+		$this->con->real_escape_string($id),
+		$this->con->real_escape_string($data),
 		date('Y-m-d H:i:s')
 	);
 	return $this->con->query($sql);
@@ -131,7 +131,7 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  private function createTable()
  {
-	$result = $this->con->query(sprintf("SHOW TABLES LIKE '%s'", $this->con->escape_string($this->table)));
+	$result = $this->con->query(sprintf("SHOW TABLES LIKE '%s'", $this->con->real_escape_string($this->table)));
 
 	if ($result === false) {
 	 return false;
