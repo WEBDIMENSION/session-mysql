@@ -1,7 +1,7 @@
 <?php
 
 namespace Webdimension\SessionHandler;
-use pdo;
+use PDO;
 final class SessionHandler implements \SessionHandlerInterface
 {
  /**
