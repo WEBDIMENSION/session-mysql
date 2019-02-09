@@ -11,9 +11,23 @@ composer require "webdimension/session-mysql"
 ## How to use
 
 ```
-require 'vendor/autoload.php';
-$db = new mysqli('localhost', 'username', 'password', 'database');
-$handler = new \Webdimension\SessionHandler\SessionHandler($db, 'sessions');
+require 'vendor/autoload.php';    
+
+// mysqli
+$mysqli = new mysqli('localhost', 'username', 'password', 'database');
+$handler = new \Webdimension\SessionHandler\SessionHandlerMysqli($mysqli, 'sessions');
+
+//pdo
+$pdo = new PDO(
+ 	sprintf($dsn, $db['host'], $db['dbname']),
+	 $db['user'],
+	 $db['pass'],
+	 array(
+		 PDO::ATTR_EMULATE_PREPARES => false,
+		 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION //USE ERRMODE_SILENT FOR PRODUCTION!
+	 ));
+	 
+$handler = new \Webdimension\SessionHandler\SessionHandlerPdo($pdo, 'sessions');
 session_set_save_handler($handler, true);
 session_start();
 $SESSION['session_test'] = 'session_test';
