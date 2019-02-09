@@ -3,7 +3,7 @@
 namespace Webdimension\SessionHandler;
 
 use mysqli;
-final class SessionHandler implements \SessionHandlerInterface
+final class SessionHandlerMysqli implements \SessionHandlerInterface
 {
  /**
 	* @var mysqli
