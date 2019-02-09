@@ -1,8 +1,7 @@
 <?php
 
 namespace Webdimension\SessionHandler;
-
-use mysqli;
+use pdo;
 final class SessionHandler implements \SessionHandlerInterface
 {
  /**
@@ -19,7 +18,7 @@ final class SessionHandler implements \SessionHandlerInterface
 	* @param mysqli $con
 	* @param string $table
 	*/
- public function __construct(mysqli $con, $table = 'sessions')
+ public function __construct( $con, $table = 'sessions')
  {
 	$this->con = $con;
 	$this->table = $table;
@@ -41,12 +40,15 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function destroy($id)
  {
-	 $sql = sprintf(
-		"DELETE FROM `%s` WHERE id = '%s'",
-		$this->table,
-		$this->con->real_escape_string($id)
-	);
-	return $this->con->query($sql);
+//	 $sql = sprintf(
+//		"DELETE FROM `%s` WHERE id = '%s'",
+//		$this->table,
+//		$this->con->real_escape_string($id)
+//	);
+//	return $this->con->query($sql);
+
+	$stmt = $this->con->prepare("Delete from  ".$this->table." WHERE id = :id");
+	return $stmt->execute(array(':id'=>$id));
  }
 
  /**
@@ -57,13 +59,15 @@ final class SessionHandler implements \SessionHandlerInterface
  public function gc($maxlifetime)
  {
 
-	$sql = sprintf(
-		"DELETE FROM `%s` WHERE updated_on < '%s'",
-		$this->table,
-		date('Y-m-d H:i:s', time() - intval($maxlifetime))
-	);
-	return $this->con->query($sql);
+//	$sql = sprintf(
+//		"DELETE FROM `%s` WHERE updated_on < '%s'",
+//		$this->table,
+//		date('Y-m-d H:i:s', time() - intval($maxlifetime))
+//	);
+//	return $this->con->query($sql);
 
+	$stmt = $this->con->prepare("Delete from  ".$this->table." WHERE updated_on < :updated");
+	return $stmt->execute(array(':updated'=>date('Y-m-d H:i:s', time() - intval($maxlifetime))));
  }
 
  /**
@@ -87,25 +91,21 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function read($session_id)
  {
-	 $sql = sprintf(
-		"SELECT data FROM `%s` WHERE id = '%s'",
-		$this->table,
-		$this->con->real_escape_string($session_id)
-	);
-	$result = $this->con->query($sql);
-
-	if ($result === false) {
-	 return '';
+//	 $sql = sprintf(
+//		"SELECT data FROM `%s` WHERE id = '%s'",
+//		$this->table,
+//		$this->con->real_escape_string($session_id)
+//	);
+//	$result = $this->con->query($sql);
+	$stmt = $this->con->prepare("SELECT * FROM ".$this->table." WHERE id=:id");
+	$stmt->execute(array(':id' => $session_id));
+	$session = $stmt->fetch(PDO::FETCH_ASSOC);
+	if ($session) {
+	 $ret = $session['data'];
+	} else {
+	 $ret = false;
 	}
-
-	if ($result->num_rows === 0) {
-	 return '';
-	}
-
-	$data = $result->fetch_assoc()['data'];
-	$result->free();
-
-	return $data;
+	return $ret;
  }
 
  /**
@@ -116,28 +116,38 @@ final class SessionHandler implements \SessionHandlerInterface
 	*/
  public function write($id, $data)
  {
-	 $sql = sprintf(
-		"REPLACE INTO `%s` (id, data, updated_on) VALUES('%s', '%s', '%s')",
-		$this->table,
-		$this->con->real_escape_string($id),
-		$this->con->real_escape_string($data),
-		date('Y-m-d H:i:s')
-	);
-	return $this->con->query($sql);
+//	 $sql = sprintf(
+//		"REPLACE INTO `%s` (id, data, updated_on) VALUES('%s', '%s', '%s')",
+//		$this->table,
+//		$this->con->real_escape_string($id),
+//		$this->con->real_escape_string($data),
+//		date('Y-m-d H:i:s')
+//	);
+//	return $this->con->query($sql);
+
+	$stmt = $this->con->prepare("REPLACE INTO  ".$this->table." (id, data, updated_on) VALUES(:id, :data, :updated_on)");
+	return $stmt->execute(
+		array(':id'=>$id,
+			':data'=>$data,
+			'updated_on'=>date('Y-m-d H:i:s')
+		));
  }
+
 
  /**
 	* @return bool
 	*/
  private function createTable()
  {
-	$result = $this->con->query(sprintf("SHOW TABLES LIKE '%s'", $this->con->real_escape_string($this->table)));
+//	$result = $this->con->query(sprintf("SHOW TABLES LIKE '%s'", $this->con->real_escape_string($this->table)));
+
+	$result = $this->con->query("SHOW TABLES LIKE ".$this->table);
 
 	if ($result === false) {
 	 return false;
 	}
 
-	if ($result->num_rows > 0) {
+	if ($result->rowCount() > 0) {
 	 return true;
 	}
 
