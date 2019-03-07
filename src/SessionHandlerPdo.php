@@ -43,12 +43,12 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
  {
 	$this->con = $con;
 	$this->dbTable = $tablename;
-	echo 'const<br/>';
+//	echo 'const<br/>';
  }
 
  public function open($save_path, $session_name)
  {
-	echo 'open-e<br/>';
+//	echo 'open-e<br/>';
 	return true;
  }
 
@@ -59,7 +59,7 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
  public function close()
  {
 //	$this->con = null;
-	echo 'close<br/>';
+//	echo 'close<br/>';
 	return true;
  }
 
@@ -70,14 +70,14 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
 	*/
  public function read($id)
  {
-	echo 'read-f<br/>';
-	echo  $this->dbTable.'<br />';
+//	echo 'read-f<br/>';
+//	echo  $this->dbTable.'<br />';
 	$sql = "SELECT * FROM ".$this->dbTable." WHERE id=:id";
 	$stmt = $this->con->prepare($sql);
 	$stmt->bindParam("id",$id);
 	$stmt->execute();
 //	vardump($stmt);
-	echo 'numRows : '. $count = $stmt->rowCount().'<br />';
+//	echo 'numRows : '. $count = $stmt->rowCount().'<br />';
 	$session = $stmt->fetch(PDO::FETCH_ASSOC);
 //	while($result = $stmt->fetch(PDO::FETCH_ASSOC)){
 //	 //$resultに格納した連想配列のplanを抽出し、$rowsに格納。planがある限り、$rowsに追加していく
@@ -89,7 +89,7 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
 	} else {
 	 $ret = '';
 	}
-	echo 'read-e<br/>';
+//	echo 'read-e<br/>';
 	return $ret;
  }
 
@@ -100,9 +100,9 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
 	*/
  public function write($id, $data)
  {
-	echo 'write-f<br/>';
-	echo $id."<br />";
-	echo $data."<br />";
+//	echo 'write-f<br/>';
+//	echo $id."<br />";
+//	echo $data."<br />";
 	$sql = "REPLACE INTO {$this->dbTable} (id,updated_on,data) VALUES (:id,:updated_on,:data)";
 	$stmt = $this->con->prepare($sql);
 	$stmt->bindParam(':id', $id);
@@ -110,7 +110,7 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
 	$stmt->bindParam(':updated_on', $ins_date);
 	$stmt->bindParam(':data', $data);
 	$ret = $stmt->execute();
-	echo 'write-e<br/>';
+//	echo 'write-e<br/>';
 	return $ret;
  }
 
@@ -121,12 +121,12 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
 	*/
  public function destroy($id)
  {
-	echo 'destroy-f<br/>';
+//	echo 'destroy-f<br/>';
 	$stmt = $this->con->prepare("DELETE FROM {$this->dbTable} WHERE id=:id");
 	$ret = $stmt->execute(array(
 		':id' => $id
 	));
-	echo 'destroy-e<br/>';
+//	echo 'destroy-e<br/>';
 
 	return $ret;
  }
@@ -143,11 +143,11 @@ final class SessionHandlerPdo implements \SessionHandlerInterface
 	*/
  public function gc($maxlifetime)
  {
-	echo 'gc-f<br/>';
+//	echo 'gc-f<br/>';
 	$stmt = $this->con->prepare("DELETE FROM {$this->dbTable} WHERE updated_on < :limit");
 	$ret = $stmt->execute(array(':limit' => date('Y-m-d H:i:s', time() - intval($maxlifetime))));
 
-	echo 'gc-e<br/>';
+//	echo 'gc-e<br/>';
 	return $ret;
  }
 }//class
